@@ -91,15 +91,21 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   GPIO_PinState sw1[2];
-  //GPIO_PinState sw2[2] = 0;
-  //GPIO_PinState sw3[2] = 0;
+  GPIO_PinState sw2[2];
+  GPIO_PinState sw3[2];
   uint32_t delaysw1 = 0;
+  uint32_t delaysw2 = 0;
+  uint32_t delaysw3 = 0;
   uint32_t delayled1 = 0;
-  uint8_t delay = 1000;
-  uint8_t Hz1 = 1000;
-  uint8_t Hz2 = 500;
-  uint8_t Hz3 = 250;
-  uint8_t Hz4 = 160;
+  uint32_t delayled3 = 0;
+  uint32_t Hz1 = 2000;
+  uint32_t Hz2 = 1000;
+  uint32_t Hz3 = 500;
+  uint32_t Hz4 = 330;
+  uint32_t delay = Hz1;
+  uint32_t delay30 = 1500;
+  uint8_t sw1c = 0;
+  uint8_t sw3c = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,36 +113,81 @@ int main(void)
   while (1)
   {
 	  sw1[0]=HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10);
-	  //sw2[0]=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3);
-	  //sw3[0]=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5);
-	  if(sw1[1]==1 && sw1[0]==0 && HAL_GetTick()-delaysw1 >= 100){
+	  sw2[0]=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3);
+	  sw3[0]=HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5);
+	  if(sw1[1]==1 && sw1[0]==0 && HAL_GetTick()-delaysw1 >= 200){
 		  delaysw1 = HAL_GetTick();
-		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, 0);
-		  if(delay == Hz1){
+		  if(delay == Hz1 && sw1c == 0){
+			  sw1c = 1;
 			  delay = Hz2;
-		  }else if(delay == Hz2){
+		  }else if(delay == Hz2 && sw1c == 0){
+			  sw1c = 1;
 			  delay = Hz3;
-		  }else if(delay == Hz3){
+		  }else if(delay == Hz3 && sw1c == 0){
+			  sw1c = 1;
 			  delay = Hz4;
-		  }else if(delay == Hz4){
+		  }else if(delay == Hz4 && sw1c == 0){
+			  sw1c = 1;
 			  delay = Hz1;
 		  }
-	  }
-	  if(HAL_GetTick() - delayled1 >= delay){
-		  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9)==0){
-			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
-		  }else{
-			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
-		  }
-		  delayled1 = HAL_GetTick();
+		  sw1c = 0;
 	  }
 	  sw1[1] = sw1[0];
+	  if(sw2[1]==1 && sw2[0]==0 && HAL_GetTick()-delaysw2 >= 200){
+	  		delaysw2 = HAL_GetTick();
+	  		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7)==0){
+	  			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, 1);
+	  		}else{
+	  			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, 0);
+	  		}
+	  }
+	  sw2[1] = sw2[0];
+	  if(sw2[1]==1 && sw2[0]==0 && HAL_GetTick()-delaysw2 >= 200){
+	  	  		delaysw2 = HAL_GetTick();
+	  	  		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7)==0){
+	  	  			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, 1);
+	  	  		}else{
+	  	  			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, 0);
+	  	  		}
+	  	  }
+	  sw2[1] = sw2[0];
+	  if(sw3[1]==1 && sw3[0]==0 && HAL_GetTick()-delaysw3 >= 200){
+		  delaysw3 = HAL_GetTick();
+		  if(delay30 == 500 && sw3c == 0){
+		  		sw3c = 1;
+		  		delay30 = 1500;
+		  }else if(delay30 == 1500 && sw3c == 0){
+		  		sw3c = 1;
+		  		delay30 = 500;
+		  }
+		  sw3c = 0;
+	  }
+	  sw3[1] = sw3[0];
+	  if(HAL_GetTick() - delayled1 >= delay){
+	  	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9)==0){
+	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
+	  	}else{
+	  		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
+	  	}
+	  		delayled1 = HAL_GetTick();
+	  }
+	  if(delay30 == 1500 && HAL_GetTick() - delayled3 >= 500 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)== 0){
+	  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+	  	delayled3 = HAL_GetTick();
+	  }else if(delay30 == 1500 && HAL_GetTick() - delayled3 >= 1500 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1){
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
+		  delayled3 = HAL_GetTick();
+	  }if(delay30 == 500 && HAL_GetTick() - delayled3 >= 500 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)== 1){
+	  	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
+	  	delayled3 = HAL_GetTick();
+	  }else if(delay30 == 500 && HAL_GetTick() - delayled3 >= 1500 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0){
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+		  delayled3 = HAL_GetTick();
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-	  //sw2[1] = sw2[0];
-	  //sw3[1] = sw3[0];
   }
   /* USER CODE END 3 */
 }
